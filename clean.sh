@@ -1,4 +1,4 @@
 #!/bin/bash
 
-rm ./dtusecure.pem
-nmcli connection delete id TestNet
+rm /home/${USER}/.ca-cert/dtusecure.pem
+nmcli connection delete id DTUsecure
