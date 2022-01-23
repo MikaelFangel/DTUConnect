@@ -22,6 +22,19 @@ if [ -f "$cert" ]; then
     fi
 fi
 
+# Checks if the connection profile already exists
+if [ $(nmcli -f GENERAL.STATE con show DTUsecure; echo $?) == 0 ]; then
+    read -p "Connection profile already exists. \
+    Do you wish to continue? [y/N] " answer
+
+    if [[ $answer == "y" || $answer == "Y" ]]; then
+        nmcli connection delete id DTUsecure
+    else
+        echo "Exiting script.."
+        exit 0
+    fi
+fi
+
 # Get user credentials
 read -r -p "Username: " username
 read -r -p "Password: " -s password
