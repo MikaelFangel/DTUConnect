@@ -7,7 +7,19 @@ if [ ! -d "$folder" ]; then
   mkdir -p $folder
 fi
 
-curl 'https://itswiki.compute.dtu.dk/images/0/07/Eduroam_aug2020.pem' -o $folder/dtusecure.pem
+cert="$folder/dtusecure.pem"
+
+if [ -f "$cert" ]; then
+    read -p "Certifacte already exists. Do you wish to redownload? [y/N] " answer
+
+    if [[ $answer == "y" || $answer == "Y" ]]; then
+        echo "Downloading certificate: "
+        curl 'https://itswiki.compute.dtu.dk/images/0/07/Eduroam_aug2020.pem' -o $folder/dtusecure.pem
+    else
+        echo "Skipping download of certificate..."
+    fi
+fi
+
 
 read -r -p "Username: " username
 read -r -p "Password: " -s password
