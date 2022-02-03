@@ -23,7 +23,7 @@ if [ -f "$cert" ]; then
 fi
 
 # Checks if the connection profile already exists
-if [ $(nmcli -f GENERAL.STATE con show DTUsecure; echo $?) == 0 ]; then
+if [[ $(nmcli -f GENERAL.STATE con show DTUsecure; echo $? == 0) ]]; then
     read -p "Connection profile already exists. \
     Do you wish to continue? [y/N] " answer
 
