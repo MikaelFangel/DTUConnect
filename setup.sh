@@ -1,7 +1,9 @@
 #!/bin/bash
 
+state=$(nmcli -f GENERAL.STATE con show DTUsecure; echo $?)
+
 # Checks if the connection profile already exists
-if [[ $(nmcli -f GENERAL.STATE con show DTUsecure; echo $? == 0) ]]; then
+if [[ $state == 0 ]]; then
     read -p "Connection profile already exists. \
     Do you wish to continue? [y/N] " answer
 
@@ -12,6 +14,8 @@ if [[ $(nmcli -f GENERAL.STATE con show DTUsecure; echo $? == 0) ]]; then
         exit 0
     fi
 fi
+
+echo "Creating connection profile..."
 
 # Get user credentials
 read -r -p "Username: " username
