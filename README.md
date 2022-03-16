@@ -21,5 +21,4 @@ Last but not least run the script:
 
 ## Requirements
 * NetworkManager
-* cURL
 * Awk
