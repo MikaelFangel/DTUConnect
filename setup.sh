@@ -3,9 +3,9 @@
 state=$(nmcli -f GENERAL.STATE con show DTUsecure; echo $?)
 
 # Checks if the connection profile already exists
-if [[ $state == 0 ]]; then
-    read -p "Connection profile already exists. \
-    Do you wish to continue? [y/N] " answer
+if [[ ${state:0-1} == 0 ]]; then
+    read -p 'Connection profile already exists.
+Do you wish to continue? [y/N] ' answer
 
     if [[ $answer == "y" || $answer == "Y" ]]; then
         nmcli connection delete id DTUsecure
