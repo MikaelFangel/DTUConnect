@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if ! command -v nmcli; then
+    echo "nmcli is not installed. Exiting script..."
+    exit 0
+fi
+
 state=$(nmcli -f GENERAL.STATE con show DTUsecure; echo $?)
 
 # Checks if the connection profile already exists
