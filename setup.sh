@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Check if nmcli is installed before running the script
-if ! command -v nmlci; then
+if ! command -v nmcli &> /dev/null; then
     echo "nmcli is not installed. Exiting script..."
     exit 0
 fi
