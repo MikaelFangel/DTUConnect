@@ -1,13 +1,13 @@
 #!/bin/bash
 
+# Check if nmcli is installed before running the script
 if ! command -v nmlci &> /dev/null; then
     echo "nmcli is not installed. Exiting script..."
     exit 0
 fi
 
-state=$(nmcli -f GENERAL.STATE con show DTUsecure; echo $?)
-
 # Checks if the connection profile already exists
+state=$(nmcli -f GENERAL.STATE con show DTUsecure; echo $?)
 if [[ $(echo $state | awk 'NF{ print $NF }') == 0 ]]; then
     read -p 'Connection profile already exists.
 Do you wish to continue? [y/N] ' answer
@@ -15,7 +15,7 @@ Do you wish to continue? [y/N] ' answer
     if [[ $answer == "y" || $answer == "Y" ]]; then
         nmcli connection delete id DTUsecure
     else
-        echo "Exiting script.."
+        echo "Exiting script..."
         exit 0
     fi
 fi
