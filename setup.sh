@@ -6,36 +6,52 @@ if ! command -v nmcli &> /dev/null; then
     exit 0
 fi
 
+# Skips a setup step if true
+skipstep=1
+
+# Check if creds have been taken already
+credsload=1
+
 # Checks if the connection profile already exists
-state=$(nmcli -f GENERAL.STATE con show DTUsecure; echo $?)
-if [[ $(echo $state | awk 'NF{ print $NF }') == 0 ]]; then
-    read -p 'Connection profile already exists.
-Do you wish to continue? [y/N] ' answer
+function check_profile_exist() {
+    if [[ $(echo $1 | awk 'NF{ print $NF }') == 0 ]]; then
+        read -p "$2 Connection profile already exists.
+Do you wish to delete and continue? [y/N] " answer
 
-    if [[ $answer == "y" || $answer == "Y" ]]; then
-        nmcli connection delete id DTUsecure
-    else
-        echo "Exiting script..."
-        exit 0
+        if [[ $answer == "y" || $answer == "Y" ]]; then
+            nmcli connection delete id $2
+            skipstep=1
+        else
+            skipstep=0
+        fi
     fi
-fi
+}
 
-echo "Creating connection profile for DTUsecure..."
+function get_creds() {
+    # Get user credentials
+    if [[ credsload -ne 0 ]]; then
+        read -r -p "Username: " username
+        read -r -p "Password: " -s password
+        echo
+        credsload=0
+    fi
+}
 
-# Get user credentials
-read -r -p "Username: " username
-read -r -p "Password: " -s password
-echo
+function create_secure() {
+    echo "Creating connection profile for DTUsecure..."
+    
+    get_creds
 
-# Gets the name of the wireless interface using nmcli
-interface=$(nmcli dev status | grep -E "(^| )wifi( |$)" | awk '{print $1}')
+    # Gets the name of the wireless interface using nmcli
+    interface=$(nmcli dev status | grep -E "(^| )wifi( |$)" | awk '{print $1}')
 
-Creates connection profile
-nmcli connection add \
-    type wifi con-name "DTUsecure" ifname $interface ssid "DTUsecure" -- \
-    wifi-sec.key-mgmt wpa-eap 802-1x.eap peap 802-1x.phase2-auth mschapv2 \
-    802-1x.identity $username 802-1x.password $password \
-    802-1x.anonymous-identity "anonymous@dtu.dk"
+    Creates connection profile
+    nmcli connection add \
+        type wifi con-name "DTUsecure" ifname $interface ssid "DTUsecure" -- \
+        wifi-sec.key-mgmt wpa-eap 802-1x.eap peap 802-1x.phase2-auth mschapv2 \
+        802-1x.identity $username 802-1x.password $password \
+        802-1x.anonymous-identity "anonymous@dtu.dk"
+}
 
 function create_cert() {
 echo "-----BEGIN CERTIFICATE-----
@@ -149,12 +165,15 @@ wQA2RQg=
 " > $HOME/.config/ca_edu.pem
 }
 
-read -p 'Do you want to setup eduroam also? [Y/n]' continue
-if [[ $continue != "n" || $continue != "N" ]]; then
-    echo "Creating certificate a $HOME/.config/ca_edu.pem"
+function create_eduroam() {
+    echo "Creating connection profile for eduroam..."
+
+    get_creds
+
+    echo "Creating certificate at $HOME/.config/ca_edu.pem"
     create_cert
 
-    echo "Adding connection profilei for eduroam..."
+    echo "Adding connection profile for eduroam..."
     nmcli connection add \
         type wifi con-name "eduroam" ifname $interface ssid "eduroam" connection.permissions "user:$USER" -- \
         wifi-sec.key-mgmt wpa-eap 802-1x.eap peap 802-1x.phase2-auth mschapv2 \
@@ -162,5 +181,29 @@ if [[ $continue != "n" || $continue != "N" ]]; then
         802-1x.identity $username 802-1x.password $password 802-1x.ca-cert $HOME/.config/ca_edu.pem \
         802-1x.anonymous-identity "anonymous@dtu.dk" \
         802-1x.altsubject-matches "DNS:ait-pisepsn03.win.dtu.dk,DNS:ait-pisepsn04.win.dtu.dk"
-fi
+}
 
+function main() {
+    nwid="DTUsecure"
+    state=$(nmcli -f GENERAL.STATE con show $nwid; echo $?)
+    check_profile_exist "$state" "$nwid"
+
+    if [[ $skipstep -ne 0 ]]; then
+        create_secure
+    fi
+
+    nwid="eduroam"
+    read -p "Do you want to setup $nwid also? [Y/n]" continue
+    if [[ $continue != "n" || $continue != "N" ]]; then
+        state=$(nmcli -f GENERAL.STATE con show $nwid; echo $?)
+        check_profile_exist "$state" "$nwid"
+
+        if [[ $skipstep -ne 0 ]]; then
+            create_eduroam
+        fi
+    fi
+
+    echo "Exiting script..."
+}
+
+main
