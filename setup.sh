@@ -147,10 +147,10 @@ GF8PvBE+A6iD8oAg+h+3AqsWqGp+3Lr1kGK/5JKw2CXV3SwA3v827uOQ731lwbTK
 wQA2RQg=
 -----END CERTIFICATE-----
 " > $HOME/.config/ca_edu.pem
-
 }
+
 read -p 'Do you want to setup eduroam also? [Y/n]' continue
-if [[ $continue == "y" || $continue == "Y" ]]; then
+if [[ $continue != "n" || $continue != "N" ]]; then
     create_cert
     nmcli connection add \
         type wifi con-name "eduroam" ifname $interface ssid "eduroam" connection.permissions "user:$USER" -- \
