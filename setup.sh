@@ -194,7 +194,7 @@ function main() {
 
     nwid="eduroam"
     read -p "Do you want to setup $nwid also? [Y/n]" continue
-    if [[ $continue != "n" || $continue != "N" ]]; then
+    if [[ $continue != "n" && $continue != "N" ]]; then
         state=$(nmcli -f GENERAL.STATE con show $nwid; echo $?)
         check_profile_exist "$state" "$nwid"
 
