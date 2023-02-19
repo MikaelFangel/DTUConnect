@@ -20,7 +20,7 @@ Do you wish to continue? [y/N] ' answer
     fi
 fi
 
-echo "Creating connection profile..."
+echo "Creating connection profile for DTUsecure..."
 
 # Get user credentials
 read -r -p "Username: " username
@@ -151,7 +151,10 @@ wQA2RQg=
 
 read -p 'Do you want to setup eduroam also? [Y/n]' continue
 if [[ $continue != "n" || $continue != "N" ]]; then
+    echo "Creating certificate a $HOME/.config/ca_edu.pem"
     create_cert
+
+    echo "Adding connection profilei for eduroam..."
     nmcli connection add \
         type wifi con-name "eduroam" ifname $interface ssid "eduroam" connection.permissions "user:$USER" -- \
         wifi-sec.key-mgmt wpa-eap 802-1x.eap peap 802-1x.phase2-auth mschapv2 \
