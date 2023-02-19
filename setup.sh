@@ -30,7 +30,7 @@ echo
 # Gets the name of the wireless interface using nmcli
 interface=$(nmcli dev status | grep -E "(^| )wifi( |$)" | awk '{print $1}')
 
-# Creates connection profile
+Creates connection profile
 nmcli connection add \
     type wifi con-name "DTUsecure" ifname $interface ssid "DTUsecure" -- \
     wifi-sec.key-mgmt wpa-eap 802-1x.eap peap 802-1x.phase2-auth mschapv2 \
@@ -38,7 +38,7 @@ nmcli connection add \
     802-1x.anonymous-identity "anonymous@dtu.dk"
 
 function create_cert() {
-echo """-----BEGIN CERTIFICATE-----
+echo "-----BEGIN CERTIFICATE-----
 MIIFszCCA5ugAwIBAgIQGPyTPfToyJJPRg/BlCoZMjANBgkqhkiG9w0BAQsFADBO
 MQswCQYDVQQGEwJESzEmMCQGA1UEChMdRGFubWFya3MgVGVrbmlza2UgVW5pdmVy
 c2l0ZXQxFzAVBgNVBAMTDkRUVSBST09UIENBIDAxMB4XDTE1MTIwMjExMDQ0OFoX
@@ -146,16 +146,18 @@ iLI/+waFbFu1yqTnfOuue/P8+TEfujz/4bwZq3s25mLQH/puEI7ueb1XTxVcJzj6
 GF8PvBE+A6iD8oAg+h+3AqsWqGp+3Lr1kGK/5JKw2CXV3SwA3v827uOQ731lwbTK
 wQA2RQg=
 -----END CERTIFICATE-----
-""" > $HOME/.config/ca_edu.pem
+" > $HOME/.config/ca_edu.pem
 
 }
 read -p 'Do you want to setup eduroam also? [Y/n]' continue
 if [[ $continue == "y" || $continue == "Y" ]]; then
     create_cert
     nmcli connection add \
-        type wifi con-name "eduroam" ifname $interface ssid "eduroam" -- \
+        type wifi con-name "eduroam" ifname $interface ssid "eduroam" connection.permissions "user:$USER" -- \
         wifi-sec.key-mgmt wpa-eap 802-1x.eap peap 802-1x.phase2-auth mschapv2 \
-        802-1x.identity $username 802-1.x.password $password 802-1x.ca-cert $HOME/.config/ca_edu.pem \
-        802-1x.anonymous-identity "anonymous@dtu.dk"
+        wifi-sec.proto rsn wifi-sec.pairwise ccmp wifi-sec.group "ccmp,tkip" \
+        802-1x.identity $username 802-1x.password $password 802-1x.ca-cert $HOME/.config/ca_edu.pem \
+        802-1x.anonymous-identity "anonymous@dtu.dk" \
+        802-1x.altsubject-matches "DNS:ait-pisepsn03.win.dtu.dk,DNS:ait-pisepsn04.win.dtu.dk"
 fi
 
