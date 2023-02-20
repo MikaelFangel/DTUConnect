@@ -45,7 +45,7 @@ function create_secure() {
     # Gets the name of the wireless interface using nmcli
     interface=$(nmcli dev status | grep -E "(^| )wifi( |$)" | awk '{print $1}')
 
-    Creates connection profile
+    # Creates connection profile
     nmcli connection add \
         type wifi con-name "DTUsecure" ifname $interface ssid "DTUsecure" -- \
         wifi-sec.key-mgmt wpa-eap 802-1x.eap peap 802-1x.phase2-auth mschapv2 \
