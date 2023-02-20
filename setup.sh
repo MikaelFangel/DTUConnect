@@ -24,6 +24,8 @@ Do you wish to delete and continue? [y/N] " answer
         else
             skipstep=0
         fi
+    else 
+        skipstep=1
     fi
 }
 
@@ -41,9 +43,6 @@ function create_secure() {
     echo "Creating connection profile for DTUsecure..."
     
     get_creds
-
-    # Gets the name of the wireless interface using nmcli
-    interface=$(nmcli dev status | grep -E "(^| )wifi( |$)" | awk '{print $1}')
 
     # Creates connection profile
     nmcli connection add \
@@ -175,8 +174,8 @@ function create_eduroam() {
 
     echo "Adding connection profile for eduroam..."
     nmcli connection add \
-        type wifi con-name "eduroam" ifname $interface ssid "eduroam" connection.permissions "user:$USER" -- \
-        wifi-sec.key-mgmt wpa-eap 802-1x.eap peap 802-1x.phase2-auth mschapv2 \
+        type wifi con-name "eduroam" ifname $interface ssid "eduroam" -- \
+        connection.permissions "user:$USER" wifi-sec.key-mgmt wpa-eap 802-1x.eap peap 802-1x.phase2-auth mschapv2 \
         wifi-sec.proto rsn wifi-sec.pairwise ccmp wifi-sec.group "ccmp,tkip" \
         802-1x.identity $username 802-1x.password $password 802-1x.ca-cert $HOME/.config/ca_edu.pem \
         802-1x.anonymous-identity "anonymous@dtu.dk" \
@@ -186,6 +185,8 @@ function create_eduroam() {
 function main() {
     nwid="DTUsecure"
     state=$(nmcli -f GENERAL.STATE con show $nwid; echo $?)
+    # Gets the name of the wireless interface using nmcli
+    interface=$(nmcli dev status | grep -E "(^| )wifi( |$)" | awk '{print $1}')
     check_profile_exist "$state" "$nwid"
 
     if [[ $skipstep -ne 0 ]]; then
