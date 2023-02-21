@@ -203,7 +203,7 @@ function main() {
             create_eduroam
         fi
     fi
-.
+
     echo "Exiting script..."
 }
 
