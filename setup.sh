@@ -16,7 +16,7 @@ credsload=1
 function check_profile_exist() {
     if [[ $(echo $1 | awk 'NF{ print $NF }') == 0 ]]; then
         read -p "$2 Connection profile already exists.
-Do you wish to delete and continue? [y/N] " answer
+Do you wish to delete your old configuration profile for $2? [y/N] " answer
 
         if [[ $answer == "y" || $answer == "Y" ]]; then
             nmcli connection delete id $2
@@ -194,12 +194,12 @@ function main() {
     fi
 
     nwid="eduroam"
-    read -p "Do you want to setup $nwid also? [Y/n]" continue
-    if [[ $continue != "n" && $continue != "N" ]]; then
-        state=$(nmcli -f GENERAL.STATE con show $nwid; echo $?)
-        check_profile_exist "$state" "$nwid"
-
-        if [[ $skipstep -ne 0 ]]; then
+    state=$(nmcli -f GENERAL.STATE con show $nwid; echo $?)
+    check_profile_exist "$state" "$nwid"
+    
+    if [[ $skipstep -ne 0 ]]; then
+        read -p "Do you want to setup $nwid also? [Y/n]" continue
+        if [[ $continue != "n" && $continue != "N" ]]; then
             create_eduroam
         fi
     fi
