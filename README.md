@@ -21,6 +21,21 @@ Last but not least run the script:
 ./setup.sh
 ```
 
-## Requirements
+### Requirements
 * NetworkManager
 * Awk
+
+## How to setup for embedded devices
+
+Make sure that the scripts are executeable
+```
+chmod +x ./connman.sh ./setup.sh
+```
+
+Then run the script on the remote device
+```
+sudo ./setup -c
+```
+
+### Requirements
+* connmann
