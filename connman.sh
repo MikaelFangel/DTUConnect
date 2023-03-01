@@ -1,4 +1,4 @@
-#!/bin/env bash
+#!/bin/bash
 # Source for configuration layout:
 # https://web.archive.org/web/20141213065729/https://software.intel.com/en-us/blogs/2014/12/04/connecting-intelr-edison-to-an-ieee-8021x-enterprise-hotspot-via-connman
 
@@ -10,16 +10,12 @@ fi
 
 if [ "$EUID" -ne 0 ];then 
     echo $'\e[1;31m'Please run connman configuration as root$'\e[0m'
-  exit 1
+    exit 1
 fi
 
 # Get credentials
 read -r -p "Username: " username
-read -r -p "Password: " password
-
-# Enable and start connman if not done already
-systemctl enable connman
-systemctl restart connman
+read -r -p "Password: " -s password
 
 # Make config file
 echo "[global]
@@ -34,9 +30,13 @@ Phase2 = MSCHAPV2
 Identity = $username
 Passphrase = $password" > /var/lib/connman/DTUsecure.config
 
-# Scan and connect if possible
-connmanctl enable wifi
+# Scan and reconnect after reboot
+echo "connmanctl enable wifi
 connmanctl scan wifi
-service=$(connmanctl services | grep DTUsecure | tr -s ' ' | sed 's/^ //' | cut -d" " -f 2)
-connmanctl connect "$service"
-exit $?
+service=$(connmanctl services | grep DTUsecure | tr -s ' ' | sed 's/^ //' | cut -d" " -f 3)
+connmanctl connect $service
+exit 0" > /etc/rc.local
+
+chmod +x /etc/rc.local
+
+reboot
