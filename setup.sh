@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# If the only flag is -c then run connman setup
+if [ "$1" == "-c" ]; then
+    ./connman.sh
+    exit $?
+fi
+
 # Check if nmcli is installed before running the script
 if ! command -v nmcli &> /dev/null; then
     echo "nmcli is not installed. Exiting script..."
