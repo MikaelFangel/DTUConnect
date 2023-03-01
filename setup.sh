@@ -59,6 +59,7 @@ function create_secure() {
 }
 
 function create_cert() {
+mkdir -p "$HOME/.config"
 echo "-----BEGIN CERTIFICATE-----
 MIIFszCCA5ugAwIBAgIQGPyTPfToyJJPRg/BlCoZMjANBgkqhkiG9w0BAQsFADBO
 MQswCQYDVQQGEwJESzEmMCQGA1UEChMdRGFubWFya3MgVGVrbmlza2UgVW5pdmVy
