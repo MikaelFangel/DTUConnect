@@ -16,7 +16,7 @@ Next make sure that setup.sh is executable:
 chmod +x ./setup.sh
 ```
 
-Last but not least run the script:
+Last but not least run the script **(be aware that on some systems you may need to be super user to complete the configuration)**:
 ```
 ./setup.sh
 ```
