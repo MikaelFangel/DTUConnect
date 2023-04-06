@@ -22,7 +22,7 @@ Last but not least run the script **(be aware that on some systems you may need 
 ```
 
 ### Requirements
-* NetworkManager
+* NetworkManager or iwd
 * Awk
 
 ## How to setup for embedded devices
