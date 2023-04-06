@@ -20,12 +20,12 @@ credsload=1
 
 # Checks if the connection profile already exists
 function check_profile_exist() {
-    if [[ $(echo $1 | awk 'NF{ print $NF }') == 0 ]]; then
-        read -p "$2 Connection profile already exists.
+    if [[ $(echo "$1" | awk 'NF{ print $NF }') == 0 ]]; then
+        read -r -p "$2 Connection profile already exists.
 Do you wish to delete your old configuration profile for $2? [y/N] " answer
 
         if [[ $answer == "y" || $answer == "Y" ]]; then
-            nmcli connection delete id $2
+            nmcli connection delete id "$2"
             skipstep=1
         else
             skipstep=0
@@ -52,9 +52,9 @@ function create_secure() {
 
     # Creates connection profile
     nmcli connection add \
-        type wifi con-name "DTUsecure" ifname $interface ssid "DTUsecure" -- \
+        type wifi con-name "DTUsecure" ifname "$interface" ssid "DTUsecure" -- \
         wifi-sec.key-mgmt wpa-eap 802-1x.eap peap 802-1x.phase2-auth mschapv2 \
-        802-1x.identity $username 802-1x.password $password \
+        802-1x.identity "$username" 802-1x.password "$password" \
         802-1x.anonymous-identity "anonymous@dtu.dk"
 }
 
@@ -168,7 +168,7 @@ iLI/+waFbFu1yqTnfOuue/P8+TEfujz/4bwZq3s25mLQH/puEI7ueb1XTxVcJzj6
 GF8PvBE+A6iD8oAg+h+3AqsWqGp+3Lr1kGK/5JKw2CXV3SwA3v827uOQ731lwbTK
 wQA2RQg=
 -----END CERTIFICATE-----
-" > $HOME/.config/ca_edu.pem
+" > "$HOME"/.config/ca_edu.pem
 }
 
 function create_eduroam() {
@@ -181,10 +181,10 @@ function create_eduroam() {
 
     echo "Adding connection profile for eduroam..."
     nmcli connection add \
-        type wifi con-name "eduroam" ifname $interface ssid "eduroam" -- \
+        type wifi con-name "eduroam" ifname "$interface" ssid "eduroam" -- \
         connection.permissions "user:$USER" wifi-sec.key-mgmt wpa-eap 802-1x.eap peap 802-1x.phase2-auth mschapv2 \
         wifi-sec.proto rsn wifi-sec.pairwise ccmp wifi-sec.group "ccmp,tkip" \
-        802-1x.identity $username 802-1x.password $password 802-1x.ca-cert $HOME/.config/ca_edu.pem \
+        802-1x.identity "$username" 802-1x.password "$password" 802-1x.ca-cert "$HOME"/.config/ca_edu.pem \
         802-1x.anonymous-identity "anonymous@dtu.dk" \
         802-1x.altsubject-matches "DNS:ait-pisepsn03.win.dtu.dk,DNS:ait-pisepsn04.win.dtu.dk"
 }
@@ -205,7 +205,7 @@ function main() {
     check_profile_exist "$state" "$nwid"
     
     if [[ $skipstep -ne 0 ]]; then
-        read -p "Do you want to setup $nwid also? [Y/n]" continue
+        read -r -p "Do you want to setup $nwid also? [Y/n]" continue
         if [[ $continue != "n" && $continue != "N" ]]; then
             create_eduroam
         fi
