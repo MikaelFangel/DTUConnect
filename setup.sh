@@ -1,11 +1,5 @@
 #!/bin/bash
 
-# If the only flag is -c then run connman setup
-if [ "$1" == "-c" ]; then
-    ./connman.sh
-    exit $?
-fi
-
 if command -v iwctl &>/dev/null; then
   ./iwd.sh
   exit $?
