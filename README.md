@@ -24,19 +24,3 @@ Last but not least run the script **(be aware that on some systems you may need 
 ### Requirements
 * NetworkManager or iwd
 * Awk
-
-## How to setup for embedded devices
-The connman mode can be use to setup embedded devices such as a Lego EV3 device running ev3dev.
-
-Make sure that the scripts are executeable
-```
-chmod +x ./connman.sh ./setup.sh
-```
-
-Then run the script on the embedded device
-```
-sudo ./setup -c
-```
-
-### Requirements
-* connmann
