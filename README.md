@@ -21,7 +21,13 @@ Last but not least run the script **(be aware that on some systems you may need 
 ./setup.sh
 ```
 
-# Usage as a flake
+### Run flake
+
+```nix
+nix run github:MikaelFangel/DTUconnect
+```
+
+### Usage as a flake
 
 [![FlakeHub](https://img.shields.io/endpoint?url=https://flakehub.com/f/MikaelFangel/DTUConnect/badge)](https://flakehub.com/flake/MikaelFangel/DTUConnect)
 
