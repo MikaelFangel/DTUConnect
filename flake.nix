@@ -13,14 +13,14 @@
       name = "dtuconnect";
       src = ./.;
 
-      nativeBuildInputs = builtins.attrValues {};
-      buildInputs = builtins.attrValues {
-        inherit (pkgs) gawk networkmanager;
-      };
+      nativeBuildInputs = builtins.attrValues { inherit (pkgs) makeWrapper; };
+      buildInputs = builtins.attrValues { inherit (pkgs) gawk ; };
 
       installPhase = ''
         install -Dm 755 "iwd.sh" "$out/bin/iwd.sh"
         install -Dm 755 "setup.sh" "$out/bin/dtuconnect"
+        wrapProgram "$out/bin/dtuconnect" \
+          --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.gawk ]};
       '';
     };
   });
