@@ -19,6 +19,9 @@
       installPhase = ''
         install -Dm 755 "iwd.sh" "$out/bin/iwd.sh"
         install -Dm 755 "setup.sh" "$out/bin/dtuconnect"
+      '';
+
+      postFixup = ''
         wrapProgram "$out/bin/dtuconnect" \
           --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.gawk ]};
       '';
