@@ -141,7 +141,7 @@ nmcli_main() {
 iwd_main() {
     if [ -f "$iwd_config_path$iwd_config_filename_secure" ]; then 
       read -r -p "$iwd_config_filename_secure connection profile already exists.
-    Do you wish to delete your old configuration profile for $iwd_config_filename_secure? [y/N] " answer
+Do you wish to delete your old configuration profile for $iwd_config_filename_secure? [y/N] " answer
     
       if [[ $answer == "y" || $answer == "Y" ]]; then 
         create_secure_iwd
