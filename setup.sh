@@ -145,9 +145,11 @@ iwd_main() {
     
       if [[ $answer == "y" || $answer == "Y" ]]; then 
         create_secure_iwd
+        create_eduroam_iwd
       fi
     else
       create_secure_iwd
+      create_eduroam_iwd
     fi
 }
 
