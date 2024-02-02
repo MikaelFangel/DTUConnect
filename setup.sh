@@ -137,7 +137,7 @@ EAP-PEAP-Phase2-Identify=$username
 EAP-PEAP-Phase2-Password=$password
 
 [Settings]
-Autoconnect=true" > $iwd_config_path$iwd_config_filename_eduroam
+AutoConnect=true" > $iwd_config_path$iwd_config_filename_eduroam
 }
 
 nmcli_main() {
