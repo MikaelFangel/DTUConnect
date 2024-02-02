@@ -106,6 +106,7 @@ create_eduroam_nmcli() {
 }
 
 create_secure_iwd() {
+    get_creds
   echo "[Security]
 EAP-Method=PEAP
 EAP-Identity=anonymous@dtu.dk
@@ -118,6 +119,7 @@ AutoConnect=true" > $iwd_config_path$iwd_config_filename_secure
 }
 
 create_eduroam_iwd() {
+    get_creds
     echo "[Security]
 EAP-Method=PEAP
 EAP-Identity=anonymous@dtu.dk
@@ -162,7 +164,7 @@ iwd_main() {
 
     check_iwd_profile_exist $iwd_config_filename_eduroam
     if [[ $skipstep -ne 0 ]]; then
-        read -r -p "Do you want to setup $nwid also? [Y/n]" continue
+        read -r -p "Do you want to setup eduroam also? [Y/n]" continue
         if [[ $continue != "n" && $continue != "N" ]]; then
             create_eduroam_iwd
         fi
