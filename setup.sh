@@ -73,7 +73,10 @@ create_cert() {
   echo "Creating certificate at $HOME/.config/ca_edu.pem"
 
   mkdir -p "$HOME/.config"
-  curl "https://raw.githubusercontent.com/MikaelFangel/DTUConnect/main/ca_eduroam.pem" > "$HOME"/.config/ca_edu.pem
+  if ! curl "https://raw.githubusercontent.com/MikaelFangel/DTUConnect/main/ca_eduroam.pem" > "$HOME"/.config/ca_edu.pem; then
+    echo "No network connection... The script now uses offline fallbak method"
+    cat ./ca_eduroam.pem > "$HOME"/.config/ca_eduroam.pem
+  fi
 }
 
 create_secure_nmcli() {
