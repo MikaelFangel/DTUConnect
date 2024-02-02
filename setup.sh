@@ -95,7 +95,6 @@ create_eduroam_nmcli() {
     echo "Creating certificate at $HOME/.config/ca_edu.pem"
     create_cert
 
-    echo "Adding connection profile for eduroam..."
     nmcli connection add \
         type wifi con-name "eduroam" ifname "$interface" ssid "eduroam" -- \
         connection.permissions "user:$USER" wifi-sec.key-mgmt wpa-eap 802-1x.eap peap 802-1x.phase2-auth mschapv2 \
@@ -106,8 +105,11 @@ create_eduroam_nmcli() {
 }
 
 create_secure_iwd() {
+    echo "Creating connection profile for DTUsecure..."
+
     get_creds
-  echo "[Security]
+
+    echo "[Security]
 EAP-Method=PEAP
 EAP-Identity=anonymous@dtu.dk
 EAP-PEAP-Phase2-Method=MSCHAPV2
@@ -119,7 +121,13 @@ AutoConnect=true" > $iwd_config_path$iwd_config_filename_secure
 }
 
 create_eduroam_iwd() {
+    echo "Creating connection profile for eduroam..."
+
     get_creds
+
+    echo "Creating certificate at $HOME/.config/ca_edu.pem"
+    create_cert
+
     echo "[Security]
 EAP-Method=PEAP
 EAP-Identity=anonymous@dtu.dk
