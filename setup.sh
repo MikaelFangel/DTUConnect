@@ -1,8 +1,24 @@
 #!/bin/bash
 
+skipstep=1
+credsload=1
+iwd=1
+
+iwd_config_path=/var/lib/iwd/
+iwd_config_filename_secure=DTUsecure.8021x
+iwd_config_filename_eduroam=eduroam.8021x
+
 if command -v iwctl &>/dev/null; then
-    ./iwd.sh
-    exit $?
+    # Make sure the user is root
+    if [ "$EUID" -ne 0 ]
+      then echo "Permission denied... Run as root."
+      exit 1
+    fi
+
+    iwd=0
+    if [ ! -d "$iwd_config_path" ]; then
+      mkdir -p "$iwd_config_path"
+    fi
 fi
 
 # Check if nmcli is installed before running the script
@@ -11,14 +27,8 @@ if ! command -v nmcli &> /dev/null; then
     exit 0
 fi
 
-# Skips a setup step if true
-skipstep=1
-
-# Check if creds have been taken already
-credsload=1
-
 # Checks if the connection profile already exists
-check_profile_exist() {
+check_nmcli_profile_exist() {
     if [[ $(echo "$1" | awk 'NF{ print $NF }') == 0 ]]; then
         read -r -p "$2 Connection profile already exists.
 Do you wish to delete your old configuration profile for $2? [y/N] " answer
@@ -44,7 +54,12 @@ get_creds() {
     fi
 }
 
-create_secure() {
+create_cert() {
+  mkdir -p "$HOME/.config"
+  curl "https://raw.githubusercontent.com/MikaelFangel/DTUConnect/main/ca_eduroam.pem" > "$HOME"/.config/ca_edu.pem
+}
+
+create_secure_nmcli() {
     echo "Creating connection profile for DTUsecure..."
     
     get_creds
@@ -57,12 +72,7 @@ create_secure() {
         802-1x.anonymous-identity "anonymous@dtu.dk"
 }
 
-create_cert() {
-  mkdir -p "$HOME/.config"
-  curl "https://raw.githubusercontent.com/MikaelFangel/DTUConnect/main/ca_eduroam.pem" > "$HOME"/.config/ca_edu.pem
-}
-
-create_eduroam() {
+create_eduroam_nmcli() {
     echo "Creating connection profile for eduroam..."
 
     get_creds
@@ -80,29 +90,72 @@ create_eduroam() {
         802-1x.altsubject-matches "DNS:ait-pisepsn03.win.dtu.dk,DNS:ait-pisepsn04.win.dtu.dk"
 }
 
-main() {
+create_secure_iwd() {
+  echo "[Security]
+EAP-Method=PEAP
+EAP-Identity=anonymous@dtu.dk
+EAP-PEAP-Phase2-Method=MSCHAPV2
+EAP-PEAP-Phase2-Identity=$username
+EAP-PEAP-Phase2-Password=$password
+
+[Settings]
+AutoConnect=true" > $iwd_config_path$iwd_config_filename_secure
+}
+
+create_eduroam_iwd() {
+    echo "[Security]
+EAP-Method=PEAP
+EAP-Identity=anonymous@dtu.dk
+EAP-PEAP-CACert=$HOME/.config/ca_edu.pem
+EAP-PEAP-Phase2-Method=MSCHAPV2
+EAP-PEAP-Phase2-Identify=$username
+EAP-PEAP-Phase2-Password=$password
+
+[Settings]
+Autoconnect=true" > $iwd_config_path$iwd_config_filename_eduroam
+}
+
+nmcli_main() {
     nwid="DTUsecure"
     state=$(nmcli -f GENERAL.STATE con show $nwid; echo $?)
     # Gets the name of the wireless interface using nmcli
     interface=$(nmcli dev status | grep -E "(^| )wifi( |$)" | awk '{print $1}')
-    check_profile_exist "$state" "$nwid"
+    check_nmcli_profile_exist "$state" "$nwid"
 
     if [[ $skipstep -ne 0 ]]; then
-        create_secure
+        create_secure_nmcli
     fi
 
     nwid="eduroam"
     state=$(nmcli -f GENERAL.STATE con show $nwid; echo $?)
-    check_profile_exist "$state" "$nwid"
+    check_nmcli_profile_exist "$state" "$nwid"
     
     if [[ $skipstep -ne 0 ]]; then
         read -r -p "Do you want to setup $nwid also? [Y/n]" continue
         if [[ $continue != "n" && $continue != "N" ]]; then
-            create_eduroam
+            create_eduroam_nmcli
         fi
     fi
-
-    echo "Exiting script..."
 }
 
-main
+iwd_main() {
+    if [ -f "$iwd_config_path$iwd_config_filename_secure" ]; then 
+      read -r -p "$iwd_config_filename_secure connection profile already exists.
+    Do you wish to delete your old configuration profile for $iwd_config_filename_secure? [y/N] " answer
+    
+      if [[ $answer == "y" || $answer == "Y" ]]; then 
+        create_secure_iwd
+      fi
+    else
+      create_secure_iwd
+    fi
+}
+
+# Initiate the main suitable for the system
+if [[ $iwd -ne 0 ]]; then
+    nmcli_main
+else
+    iwd_main
+fi
+
+echo "Exiting script..."
