@@ -44,6 +44,21 @@ Do you wish to delete your old configuration profile for $2? [y/N] " answer
     fi
 }
 
+check_iwd_profile_exist() {
+    if [ -f "$iwd_config_path$1" ]; then 
+      read -r -p "$1 connection profile already exists.
+Do you wish to delete your old configuration profile for $1? [y/N] " answer
+    
+      if [[ $answer == "y" || $answer == "Y" ]]; then 
+        skipstep=1
+      else
+        skipstep=0
+      fi
+    else
+      skipstep=1
+    fi
+}
+
 get_creds() {
     # Get user credentials
     if [[ credsload -ne 0 ]]; then
@@ -139,17 +154,18 @@ nmcli_main() {
 }
 
 iwd_main() {
-    if [ -f "$iwd_config_path$iwd_config_filename_secure" ]; then 
-      read -r -p "$iwd_config_filename_secure connection profile already exists.
-Do you wish to delete your old configuration profile for $iwd_config_filename_secure? [y/N] " answer
-    
-      if [[ $answer == "y" || $answer == "Y" ]]; then 
+    check_iwd_profile_exist $iwd_config_filename_secure
+
+    if [[ $skipstep -ne 0 ]]; then
         create_secure_iwd
-        create_eduroam_iwd
-      fi
-    else
-      create_secure_iwd
-      create_eduroam_iwd
+    fi
+
+    check_iwd_profile_exist $iwd_config_filename_eduroam
+    if [[ $skipstep -ne 0 ]]; then
+        read -r -p "Do you want to setup $nwid also? [Y/n]" continue
+        if [[ $continue != "n" && $continue != "N" ]]; then
+            create_eduroam_iwd
+        fi
     fi
 }
 
