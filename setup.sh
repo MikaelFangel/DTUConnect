@@ -30,8 +30,8 @@ fi
 # Checks if the connection profile already exists
 check_nmcli_profile_exist() {
   if [[ $(echo "$1" | awk 'NF{ print $NF }') == 0 ]]; then
-    read -r -p "$2 Connection profile already exists.
-Do you wish to delete your old configuration profile for $2? [y/N] " answer
+    read -r -p "The $2 connection profile already exists.
+Do you wish to delete it? [y/N] " answer
 
     if [[ $answer == "y" || $answer == "Y" ]]; then
       nmcli connection delete id "$2"
@@ -46,8 +46,8 @@ Do you wish to delete your old configuration profile for $2? [y/N] " answer
 
 check_iwd_profile_exist() {
   if [ -f "$iwd_config_path$1" ]; then 
-    read -r -p "$1 connection profile already exists.
-Do you wish to delete your old configuration profile for $1? [y/N] " answer
+    read -r -p "The $1 connection profile already exists.
+Do you wish to delete it? [y/N] " answer
 
     if [[ $answer == "y" || $answer == "Y" ]]; then 
       skipstep=1
@@ -74,7 +74,7 @@ create_cert() {
 
   mkdir -p "$HOME/.config"
   if ! curl -f "https://raw.githubusercontent.com/MikaelFangel/DTUConnect/main/ca_eduroam.pem" > "$HOME"/.config/ca_edu.pem; then
-    echo "No network connection... The script now uses offline fallbak method"
+    echo "Network issue... The script now uses an offline fallback method"
     cat ./ca_eduroam.pem > "$HOME"/.config/ca_eduroam.pem
   fi
 }
@@ -159,7 +159,7 @@ nmcli_main() {
   check_nmcli_profile_exist "$state" "$nwid"
 
   if [[ $skipstep -ne 0 ]]; then
-    read -r -p "Do you want to setup $nwid also? [Y/n]" continue
+    read -r -p "Do you want to install $nwid? [Y/n]" continue
     if [[ $continue != "n" && $continue != "N" ]]; then
       create_eduroam_nmcli
     fi
@@ -175,7 +175,7 @@ iwd_main() {
 
   check_iwd_profile_exist $iwd_config_filename_eduroam
   if [[ $skipstep -ne 0 ]]; then
-    read -r -p "Do you want to setup eduroam also? [Y/n]" continue
+    read -r -p "Do you want to install eduroam? [Y/n]" continue
     if [[ $continue != "n" && $continue != "N" ]]; then
       create_eduroam_iwd
     fi
