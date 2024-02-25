@@ -29,8 +29,7 @@ fi
 
 # Checks if the connection profile already exists
 check_nmcli_profile_exist() {
-  state=$1
-  if [[ "${state: -1}" == 0 ]]; then
+  if [[ $1 == 0 ]]; then
     read -r -p "The $2 connection profile already exists.
 Do you wish to delete it? [y/N] " answer
 
@@ -146,7 +145,8 @@ AutoConnect=true" > $iwd_config_path$iwd_config_filename_eduroam
 
 nmcli_main() {
   nwid="DTUsecure"
-  state=$(nmcli -f GENERAL.STATE con show $nwid; echo $?)
+  nmcli -f GENERAL.STATE con show $nwid &> /dev/null
+  state=$?
   # Gets the name of the wireless interface using nmcli
   interface=$(nmcli dev status | grep -E "(^| )wifi( |$)" | awk '{print $1}')
   check_nmcli_profile_exist "$state" "$nwid"
@@ -156,7 +156,8 @@ nmcli_main() {
   fi
 
   nwid="eduroam"
-  state=$(nmcli -f GENERAL.STATE con show $nwid; echo $?)
+  nmcli -f GENERAL.STATE con show $nwid &> /dev/null
+  state=$?
   check_nmcli_profile_exist "$state" "$nwid"
 
   if [[ $skipstep -ne 0 ]]; then
