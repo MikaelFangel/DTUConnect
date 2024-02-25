@@ -67,7 +67,7 @@ get_creds() {
 }
 
 create_cert() {
-  echo "Creating certificate at $HOME/.config/ca_edu.pem"
+  echo "Creating certificate at $HOME/.config/ca_eduroam.pem"
 
   mkdir -p "$HOME/.config"
   if ! curl -f "https://raw.githubusercontent.com/MikaelFangel/DTUConnect/main/ca_eduroam.pem" > "$HOME"/.config/ca_edu.pem; then
