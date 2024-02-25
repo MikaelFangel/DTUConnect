@@ -29,7 +29,8 @@ fi
 
 # Checks if the connection profile already exists
 check_nmcli_profile_exist() {
-  if [[ $(echo "$1" | awk 'NF{ print $NF }') == 0 ]]; then
+  state=$1
+  if [[ "${state: -1}" == 0 ]]; then
     read -r -p "The $2 connection profile already exists.
 Do you wish to delete it? [y/N] " answer
 
