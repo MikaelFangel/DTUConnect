@@ -103,7 +103,7 @@ create_eduroam_nmcli() {
     type wifi con-name "eduroam" ifname "$interface" ssid "eduroam" -- \
     connection.permissions "user:$USER" wifi-sec.key-mgmt wpa-eap 802-1x.eap peap 802-1x.phase2-auth mschapv2 \
     wifi-sec.proto rsn wifi-sec.pairwise ccmp wifi-sec.group "ccmp,tkip" \
-    802-1x.identity "$username" 802-1x.password "$password" 802-1x.ca-cert "$HOME"/.config/ca_edu.pem \
+    802-1x.identity "$username" 802-1x.password "$password" 802-1x.ca-cert "$HOME"/.config/ca_eduroam.pem \
     802-1x.anonymous-identity "anonymous@dtu.dk" \
     802-1x.altsubject-matches "DNS:ait-pisepsn03.win.dtu.dk,DNS:ait-pisepsn04.win.dtu.dk"
 }
