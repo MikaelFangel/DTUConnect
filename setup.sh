@@ -127,11 +127,13 @@ create_eduroam_iwd() {
   get_creds
 
   create_cert
+  cp "$HOME"/.config/ca_eduroam.pem /var/lib/iwd/ca_eduroam.pem
 
   echo "[Security]
 EAP-Method=PEAP
 EAP-Identity=anonymous@dtu.dk
-EAP-PEAP-CACert=$HOME/.config/ca_eduroam.pem
+EAP-PEAP-CACert=/var/lib/iwd/ca_eduroam.pem
+EAP-PEAP-ServerDomainMask=ait-pisepsn03.win.dtu.dk
 EAP-PEAP-Phase2-Method=MSCHAPV2
 EAP-PEAP-Phase2-Identity=$username
 EAP-PEAP-Phase2-Password=$password
