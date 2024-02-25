@@ -19,10 +19,7 @@ if command -v iwctl &>/dev/null; then
   if [ ! -d "$iwd_config_path" ]; then
     mkdir -p "$iwd_config_path"
   fi
-fi
-
-# Check if nmcli is installed before running the script
-if ! command -v nmcli &> /dev/null; then
+elif ! command -v nmcli &> /dev/null; then
   echo "nmcli/iwd is not installed. Exiting script..."
   exit 0
 fi
