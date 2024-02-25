@@ -131,7 +131,7 @@ create_eduroam_iwd() {
   echo "[Security]
 EAP-Method=PEAP
 EAP-Identity=anonymous@dtu.dk
-EAP-PEAP-CACert=$HOME/.config/ca_edu.pem
+EAP-PEAP-CACert=$HOME/.config/ca_eduroam.pem
 EAP-PEAP-Phase2-Method=MSCHAPV2
 EAP-PEAP-Phase2-Identify=$username
 EAP-PEAP-Phase2-Password=$password
