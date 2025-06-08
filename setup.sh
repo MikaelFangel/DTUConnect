@@ -133,7 +133,7 @@ create_eduroam_iwd() {
 EAP-Method=PEAP
 EAP-Identity=anonymous@dtu.dk
 EAP-PEAP-CACert=/var/lib/iwd/ca_eduroam.pem
-EAP-PEAP-ServerDomainMask=ait-pisepsn03.win.dtu.dk
+EAP-PEAP-ServerDomainMask=ait-pisepsn04.win.dtu.dk;ait-pisepsn03.win.dtu.dk
 EAP-PEAP-Phase2-Method=MSCHAPV2
 EAP-PEAP-Phase2-Identity=$username
 EAP-PEAP-Phase2-Password=$password
