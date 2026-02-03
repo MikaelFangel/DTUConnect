@@ -70,7 +70,7 @@ create_cert() {
   echo "Creating certificate at $HOME/.config/ca_eduroam.pem"
 
   mkdir -p "$HOME/.config"
-  if ! curl -f "https://raw.githubusercontent.com/MikaelFangel/DTUConnect/main/ca_eduroam.pem" > "$HOME"/.config/ca_edu.pem; then
+  if ! curl -f "https://raw.githubusercontent.com/MikaelFangel/DTUConnect/main/ca_eduroam.pem" > "$HOME"/.config/ca_eduroam.pem; then
     echo "Network issue... The script now uses an offline fallback method"
     cat ./ca_eduroam.pem > "$HOME"/.config/ca_eduroam.pem
   fi
