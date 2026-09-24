@@ -6,7 +6,9 @@
 
   outputs = { self, nixpkgs, flake-utils }:
 
-  flake-utils.lib.eachDefaultSystem (system: let 
+  flake-utils.lib.eachSystem
+    (builtins.filter (system: system != "x86_64-darwin") flake-utils.lib.defaultSystems)
+    (system: let 
     pkgs = import nixpkgs { inherit system; };
   in  {
     packages.default = pkgs.stdenv.mkDerivation {
@@ -27,4 +29,3 @@
     };
   });
 }
-
